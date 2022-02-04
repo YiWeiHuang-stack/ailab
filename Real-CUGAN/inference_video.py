@@ -26,9 +26,9 @@ class UpScalerMT(threading.Thread):
         return (idx, res)
 
     def run(self):
-        while (1):
+        while 1:
             tmp = self.inp_q.get()
-            if (tmp == None):
+            if tmp is None:
                 # print("exit")
                 break
             self.res_q.put(self.inference(tmp))
