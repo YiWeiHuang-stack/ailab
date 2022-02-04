@@ -39,10 +39,7 @@ class UNetConv(nn.Module):
             nn.Conv2d(mid_channels, out_channels, 3, 1, 0),
             nn.LeakyReLU(0.1, inplace=True),
         )
-        if se:
-            self.seblock = SEBlock(out_channels, reduction=8, bias=True)
-        else:
-            self.seblock = None
+        self.seblock = SEBlock(out_channels, reduction=8, bias=True) if se else None
 
     def forward(self, x):
         z = self.conv(x)
@@ -82,8 +79,7 @@ class UNet1(nn.Module):
         x1 = F.pad(x1, (-4, -4, -4, -4))
         x3 = self.conv3(x1 + x2)
         x3 = F.leaky_relu(x3, 0.1, inplace=True)
-        z = self.conv_bottom(x3)
-        return z
+        return self.conv_bottom(x3)
 
     def forward_a(self, x):
         x1 = self.conv1(x)
@@ -99,8 +95,7 @@ class UNet1(nn.Module):
         x1 = F.pad(x1, (-4, -4, -4, -4))
         x3 = self.conv3(x1 + x2)
         x3 = F.leaky_relu(x3, 0.1, inplace=True)
-        z = self.conv_bottom(x3)
-        return z
+        return self.conv_bottom(x3)
 class UNet1x3(nn.Module):
     def __init__(self, in_channels, out_channels, deconv):
         super(UNet1x3, self).__init__()
@@ -134,8 +129,7 @@ class UNet1x3(nn.Module):
         x1 = F.pad(x1, (-4, -4, -4, -4))
         x3 = self.conv3(x1 + x2)
         x3 = F.leaky_relu(x3, 0.1, inplace=True)
-        z = self.conv_bottom(x3)
-        return z
+        return self.conv_bottom(x3)
 
     def forward_a(self, x):
         x1 = self.conv1(x)
@@ -151,8 +145,7 @@ class UNet1x3(nn.Module):
         x1 = F.pad(x1, (-4, -4, -4, -4))
         x3 = self.conv3(x1 + x2)
         x3 = F.leaky_relu(x3, 0.1, inplace=True)
-        z = self.conv_bottom(x3)
-        return z
+        return self.conv_bottom(x3)
 class UNet2(nn.Module):
     def __init__(self, in_channels, out_channels, deconv):
         super(UNet2, self).__init__()
@@ -201,8 +194,7 @@ class UNet2(nn.Module):
         x5 = self.conv5(x1 + x4)
         x5 = F.leaky_relu(x5, 0.1, inplace=True)
 
-        z = self.conv_bottom(x5)
-        return z
+        return self.conv_bottom(x5)
 
     def forward_a(self, x):#conv234结尾有se
         x1 = self.conv1(x)
@@ -222,8 +214,7 @@ class UNet2(nn.Module):
         x3 = F.leaky_relu(x3, 0.1, inplace=True)
 
         x2 = F.pad(x2, (-4, -4, -4, -4))
-        x4 = self.conv4.conv(x2 + x3)
-        return x4
+        return self.conv4.conv(x2 + x3)
 
     def forward_d(self, x1,x4):  # conv234结尾有se
         x4 = self.conv4_up(x4)
@@ -233,8 +224,7 @@ class UNet2(nn.Module):
         x5 = self.conv5(x1 + x4)
         x5 = F.leaky_relu(x5, 0.1, inplace=True)
 
-        z = self.conv_bottom(x5)
-        return z
+        return self.conv_bottom(x5)
 class UpCunet2x(nn.Module):#完美tile，全程无损
     def __init__(self, in_channels=3, out_channels=3):
         super(UpCunet2x, self).__init__()
